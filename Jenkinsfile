@@ -12,7 +12,7 @@ pipeline {
       steps {
         script {
           openshift.withCluster() {
-            openshift.selector("bc", "demo").startBuild("--from-file=target/demo-0.0.1-SNAPSHOT.jar", "--wait")
+            openshift.selector("bc", "demo").startBuild("--from-file=target/demo-0.0.1-SNAPSHOT.jar", "--binary", "--wait")
           }
         }
       }
