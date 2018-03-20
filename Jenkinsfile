@@ -34,11 +34,11 @@ pipeline {
       }
     }
     stage('Promote to DEV') {
-      timeout(time: 1, unit: 'MINUTES') {
-        input 'Promote to DEV?'
-      }
       steps {
         script {
+          timeout(time: 1, unit: 'MINUTES') {
+            input 'Promote to DEV?'
+          }
           openshift.withCluster() {
             openshift.tag("demo:latest", "demo:dev")
           }
@@ -55,11 +55,11 @@ pipeline {
       }
     }
     stage('Promote STAGE') {
-      timeout(time: 1, unit: 'MINUTES') {
-        input 'Promote to STAGE?'
-      }
       steps {
         script {
+          timeout(time: 1, unit: 'MINUTES') {
+            input 'Promote to DEV?'
+          }
           openshift.withCluster() {
             openshift.tag("demo:dev", "demo:stage")
           }
