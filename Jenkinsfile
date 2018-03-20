@@ -8,15 +8,6 @@ pipeline {
         sh "mvn clean install"
       }
     }
-    stage('Create Image Builder') {
-      steps {
-        script {
-          openshift.withCluster() {
-            openshift.newBuild("--name=demo", "--image-stream=demo", "--binary")
-          }
-        }
-      }
-    }
     stage('Build Image') {
       steps {
         script {
