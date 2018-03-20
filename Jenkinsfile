@@ -9,6 +9,13 @@ pipeline {
       }
     }
     stage('Create Image Builder') {
+      when {
+        expression {
+          openshift.withCluster() {
+            return !openshift.selector("bc", "demo-binary").exists();
+          }
+        }
+      }
       steps {
         script {
           openshift.withCluster() {
@@ -27,6 +34,9 @@ pipeline {
       }
     }
     stage('Promote to DEV') {
+      timeout(time: 1, unit: 'MINUTES') {
+        input 'Promote to DEV?'
+      }
       steps {
         script {
           openshift.withCluster() {
@@ -45,6 +55,9 @@ pipeline {
       }
     }
     stage('Promote STAGE') {
+      timeout(time: 1, unit: 'MINUTES') {
+        input 'Promote to STAGE?'
+      }
       steps {
         script {
           openshift.withCluster() {
