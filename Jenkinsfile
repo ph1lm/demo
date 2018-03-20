@@ -8,11 +8,20 @@ pipeline {
         sh "mvn clean install"
       }
     }
+    stage('Create Image Builder') {
+      steps {
+        script {
+          openshift.withCluster() {
+            openshift.newBuild("--name=demo-binary", "--image-stream=demo", "--binary")
+          }
+        }
+      }
+    }
     stage('Build Image') {
       steps {
         script {
           openshift.withCluster() {
-            openshift.selector("bc", "demo").startBuild("--from-file=target/demo-0.0.1-SNAPSHOT.jar", "--git-repository=https://github.com/ph1lm/demo.git", "--wait")
+            openshift.selector("bc", "demo-binary").startBuild("--from-file=target/demo-0.0.1-SNAPSHOT.jar", "--wait")
           }
         }
       }
