@@ -12,7 +12,7 @@ pipeline {
       steps {
         script {
           openshift.withCluster() {
-            openshift.newBuild("--name=demo", "--image-stream=demo:latest", "--binary")
+            openshift.newBuild("--name=demo", "--image-stream=demo", "--binary")
           }
         }
       }
