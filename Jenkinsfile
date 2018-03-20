@@ -9,13 +9,6 @@ pipeline {
       }
     }
     stage('Create Image Builder') {
-      when {
-        expression {
-          openshift.withCluster() {
-            return !openshift.selector("bc", "demo").exists();
-          }
-        }
-      }
       steps {
         script {
           openshift.withCluster() {
@@ -43,17 +36,10 @@ pipeline {
       }
     }
     stage('Create DEV') {
-      when {
-        expression {
-          openshift.withCluster() {
-            return !openshift.selector('dc', 'demo-dev').exists()
-          }
-        }
-      }
       steps {
         script {
           openshift.withCluster() {
-            openshift.newApp("demo:dev~https://github.com/ph1lm/demo.git", "--name=demo-dev").narrow('svc').expose()
+            openshift.newApp("demo:dev", "--name=demo-dev").narrow('svc').expose()
           }
         }
       }
@@ -68,17 +54,10 @@ pipeline {
       }
     }
     stage('Create STAGE') {
-      when {
-        expression {
-          openshift.withCluster() {
-            return !openshift.selector('dc', 'demo-stage').exists()
-          }
-        }
-      }
       steps {
         script {
           openshift.withCluster() {
-            openshift.newApp("demo:stage~https://github.com/ph1lm/demo.git", "--name=demo-stage").narrow('svc').expose()
+            openshift.newApp("demo:stage", "--name=demo-stage").narrow('svc').expose()
           }
         }
       }
