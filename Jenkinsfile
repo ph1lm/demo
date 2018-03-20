@@ -53,7 +53,7 @@ pipeline {
       steps {
         script {
           openshift.withCluster() {
-            openshift.newApp("demo:latest", "--name=demo-dev").narrow('svc').expose()
+            openshift.newApp("demo:dev~https://github.com/ph1lm/demo.git", "--name=demo-dev").narrow('svc').expose()
           }
         }
       }
@@ -78,7 +78,7 @@ pipeline {
       steps {
         script {
           openshift.withCluster() {
-            openshift.newApp("demo:stage", "--name=demo-stage").narrow('svc').expose()
+            openshift.newApp("demo:stage~https://github.com/ph1lm/demo.git", "--name=demo-stage").narrow('svc').expose()
           }
         }
       }
