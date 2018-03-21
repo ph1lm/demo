@@ -1,7 +1,5 @@
 pipeline {
-  agent {
-      label 'maven'
-  }
+  agent any
   stages {
     stage('Build App') {
       steps {
@@ -46,6 +44,13 @@ pipeline {
       }
     }
     stage('Create DEV') {
+      when {
+        expression {
+          openshift.withCluster() {
+            return !openshift.selector('dc', 'demo-dev').exists()
+          }
+        }
+      }
       steps {
         script {
           openshift.withCluster() {
@@ -67,6 +72,13 @@ pipeline {
       }
     }
     stage('Create STAGE') {
+      when {
+        expression {
+          openshift.withCluster() {
+            return !openshift.selector('dc', 'demo-stage').exists()
+          }
+        }
+      }
       steps {
         script {
           openshift.withCluster() {
