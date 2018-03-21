@@ -3,6 +3,22 @@ pipeline {
     label 'maven'
   }
   stages {
+    stage('Build') {
+      when {
+        expression {
+          openshift.withCluster() {
+            return !openshift.selector('bc', 'demo').exists();
+          }
+        }
+      }
+      steps {
+        script {
+          openshift.withCluster() {
+            openshift.newApp('demo:0.1~https://github.com/ph1lm/demo')
+          }
+        }
+      }
+    }
     stage('Build App') {
       steps {
         sh 'mvn clean install'
