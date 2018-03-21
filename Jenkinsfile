@@ -54,7 +54,7 @@ pipeline {
       steps {
         script {
           openshift.withCluster() {
-            openshift.newApp('demo:dev', '--name=demo-dev').narrow('svc').expose('--port=80', '--target-port=8080')
+            openshift.newApp('demo:dev', '--name=demo-dev').narrow('svc').expose('--port=8080')
           }
         }
       }
@@ -80,7 +80,7 @@ pipeline {
       steps {
         script {
           openshift.withCluster() {
-            openshift.newApp('demo:stage', '--name=demo-stage').narrow('svc').expose('--port=80', '--target-port=8080')
+            openshift.newApp('demo:stage', '--name=demo-stage').narrow('svc').expose('--port=8080')
           }
         }
       }
