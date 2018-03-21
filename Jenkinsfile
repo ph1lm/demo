@@ -19,7 +19,7 @@ pipeline {
       steps {
         script {
           openshift.withCluster() {
-            openshift.newBuild('--name=demo-binary', '--image-stream=demo', '--binary')
+            openshift.newBuild('--name=demo-binary', '--image-stream=demo', '--binary', '--allow-missing-imagestream-tags')
           }
         }
       }
