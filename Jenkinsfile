@@ -8,7 +8,7 @@ pipeline {
         sh 'mvn clean install'
       }
     }
-    stage('Create Image Builder') {
+    stage('Create DEV Image Builder') {
       when {
         expression {
           openshift.withCluster() {
@@ -33,12 +33,13 @@ pipeline {
         }
       }
     }
+
     stage('Promote to DEV') {
       steps {
         script {
-          input 'Promote to DEV?'
+          input 'Deploy to DEV?'
           openshift.withCluster() {
-            openshift.tag('demo-binary:latest', 'demo-binary:dev')
+            openshift.tag('demo-binary:latest', 'demo-dev:latest')
           }
         }
       }
@@ -54,33 +55,61 @@ pipeline {
       steps {
         script {
           openshift.withCluster() {
-            openshift.newApp('demo-binary:dev', '--name=demo-dev').narrow('svc')
+            openshift.newApp('demo-dev:latest', '--name=demo-dev').narrow('svc')
           }
         }
       }
     }
-    stage('Promote STAGE') {
+
+    stage('Promote QA') {
       steps {
         script {
-          input 'Promote to STAGE?'
+          input 'Promote to QA?'
           openshift.withCluster() {
-            openshift.tag('demo-binary:dev', 'demo-binary:stage')
+            openshift.tag('demo-dev:latest', 'demo-qa:latest')
           }
         }
       }
     }
-    stage('Create STAGE') {
+    stage('Create QA') {
       when {
         expression {
           openshift.withCluster() {
-            return !openshift.selector('dc', 'demo-stage').exists()
+            return !openshift.selector('dc', 'demo-qa').exists()
           }
         }
       }
       steps {
         script {
           openshift.withCluster() {
-            openshift.newApp('demo-binary:stage', '--name=demo-stage').narrow('svc')
+            openshift.newApp('demo-qa:latest', '--name=demo-qa').narrow('svc')
+          }
+        }
+      }
+    }
+
+    stage('Promote PROD') {
+      steps {
+        script {
+          input 'Promote to PROD?'
+          openshift.withCluster() {
+            openshift.tag('demo-qa:latest', 'demo-prod:latest')
+          }
+        }
+      }
+    }
+    stage('Create PROD') {
+      when {
+        expression {
+          openshift.withCluster() {
+            return !openshift.selector('dc', 'demo-prod').exists()
+          }
+        }
+      }
+      steps {
+        script {
+          openshift.withCluster() {
+            openshift.newApp('demo-prod:latest', '--name=demo-prod').narrow('svc')
           }
         }
       }
