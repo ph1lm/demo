@@ -19,7 +19,7 @@ pipeline {
       steps {
         script {
           openshift.withCluster() {
-            openshift.newBuild('--name=demo-binary', '--image-stream=redhat-openjdk18-openshift:latest', '--binary')
+            openshift.newBuild('--name=demo', '--image-stream=redhat-openjdk18-openshift:latest', '--binary')
           }
         }
       }
@@ -28,7 +28,7 @@ pipeline {
       steps {
         script {
           openshift.withCluster() {
-            openshift.selector('bc', 'demo-binary').startBuild('--from-file=target/demo-0.0.1-SNAPSHOT.jar', '--wait')
+            openshift.selector('bc', 'demo').startBuild('--from-file=target/demo-0.0.1-SNAPSHOT.jar', '--wait')
           }
         }
       }
