@@ -19,7 +19,7 @@ pipeline {
       steps {
         script {
           openshift.withCluster() {
-            openshift.newBuild('--name=demo', '--image-stream=redhat-openjdk18-openshift:latest', '--binary')
+            openshift.newBuild('--name=demo-binary', '--image-stream=redhat-openjdk18-openshift:latest', '--binary')
           }
         }
       }
@@ -28,7 +28,7 @@ pipeline {
       steps {
         script {
           openshift.withCluster() {
-            openshift.selector('bc', 'demo').startBuild('--from-file=target/demo-0.0.1-SNAPSHOT.jar', '--wait')
+            openshift.selector('bc', 'demo-binary').startBuild('--from-file=target/demo-0.0.1-SNAPSHOT.jar', '--wait')
           }
         }
       }
@@ -38,7 +38,7 @@ pipeline {
         script {
           input 'Promote to DEV?'
           openshift.withCluster() {
-            openshift.tag('demo:latest', 'demo:dev')
+            openshift.tag('demo-binary:latest', 'demo-binary:dev')
           }
         }
       }
@@ -54,7 +54,7 @@ pipeline {
       steps {
         script {
           openshift.withCluster() {
-            openshift.newApp('demo:dev', '--name=demo-dev').narrow('svc')
+            openshift.newApp('demo-binary:dev', '--name=demo-dev').narrow('svc')
           }
         }
       }
@@ -64,7 +64,7 @@ pipeline {
         script {
           input 'Promote to STAGE?'
           openshift.withCluster() {
-            openshift.tag('demo:dev', 'demo:stage')
+            openshift.tag('demo-binary:dev', 'demo-binary:stage')
           }
         }
       }
@@ -80,7 +80,7 @@ pipeline {
       steps {
         script {
           openshift.withCluster() {
-            openshift.newApp('demo:stage', '--name=demo-stage').narrow('svc')
+            openshift.newApp('demo-binary:stage', '--name=demo-stage').narrow('svc')
           }
         }
       }
