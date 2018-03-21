@@ -9,6 +9,6 @@ public class DemoController {
 
 	@RequestMapping("/")
 	public String test() {
-	  return "Test1";
+	  return "Test2";
 	}
 }
