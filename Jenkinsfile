@@ -3,22 +3,6 @@ pipeline {
     label 'maven'
   }
   stages {
-    stage('Build') {
-      when {
-        expression {
-          openshift.withCluster() {
-            return !openshift.selector('bc', 'demo-spring').exists();
-          }
-        }
-      }
-      steps {
-        script {
-          openshift.withCluster() {
-            openshift.newApp('demo-spring:0.1~https://github.com/ph1lm/demo')
-          }
-        }
-      }
-    }
     stage('Build App') {
       steps {
         sh 'mvn clean install'
@@ -35,7 +19,7 @@ pipeline {
       steps {
         script {
           openshift.withCluster() {
-            openshift.newBuild('--name=demo-binary', '--image-stream=demo-spring', '--binary')
+            openshift.newBuild('--name=demo-binary', '--image-stream=demo', '--binary')
           }
         }
       }
