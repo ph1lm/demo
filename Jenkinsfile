@@ -7,14 +7,14 @@ pipeline {
       when {
         expression {
           openshift.withCluster() {
-            return !openshift.selector('bc', 'demo').exists();
+            return !openshift.selector('bc', 'demo-spring').exists();
           }
         }
       }
       steps {
         script {
           openshift.withCluster() {
-            openshift.newApp('demo:0.1~https://github.com/ph1lm/demo')
+            openshift.newApp('demo-spring:0.1~https://github.com/ph1lm/demo')
           }
         }
       }
@@ -35,7 +35,7 @@ pipeline {
       steps {
         script {
           openshift.withCluster() {
-            openshift.newBuild('--name=demo-binary', '--image-stream=demo', '--binary')
+            openshift.newBuild('--name=demo-binary', '--image-stream=demo-spring', '--binary')
           }
         }
       }
