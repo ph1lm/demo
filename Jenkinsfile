@@ -5,21 +5,21 @@ pipeline {
   stages {
     stage('Build App') {
       steps {
-        sh "mvn clean install"
+        sh 'mvn clean install'
       }
     }
     stage('Create Image Builder') {
       when {
         expression {
           openshift.withCluster() {
-            return !openshift.selector("bc", "demo-binary").exists();
+            return !openshift.selector('bc', 'demo-binary').exists();
           }
         }
       }
       steps {
         script {
           openshift.withCluster() {
-            openshift.newBuild("--name=demo-binary", "--image-stream=demo", "--binary")
+            openshift.newBuild('--name=demo-binary', '--image-stream=demo', '--binary')
           }
         }
       }
@@ -28,7 +28,7 @@ pipeline {
       steps {
         script {
           openshift.withCluster() {
-            openshift.selector("bc", "demo-binary").startBuild("--from-file=target/demo-0.0.1-SNAPSHOT.jar", "--wait")
+            openshift.selector('bc', 'demo-binary').startBuild('--from-file=target/demo-0.0.1-SNAPSHOT.jar', '--wait')
           }
         }
       }
@@ -38,7 +38,7 @@ pipeline {
         script {
           input 'Promote to DEV?'
           openshift.withCluster() {
-            openshift.tag("demo:latest", "demo:dev")
+            openshift.tag('demo:latest', 'demo:dev')
           }
         }
       }
@@ -54,7 +54,7 @@ pipeline {
       steps {
         script {
           openshift.withCluster() {
-            openshift.newApp("demo:dev", "--name=demo-dev").narrow('svc').expose()
+            openshift.newApp('demo:dev', '--name=demo-dev').narrow('svc').expose('--port=80', '--target-port=8080')
           }
         }
       }
@@ -64,7 +64,7 @@ pipeline {
         script {
           input 'Promote to STAGE?'
           openshift.withCluster() {
-            openshift.tag("demo:dev", "demo:stage")
+            openshift.tag('demo:dev', 'demo:stage')
           }
         }
       }
@@ -80,7 +80,7 @@ pipeline {
       steps {
         script {
           openshift.withCluster() {
-            openshift.newApp("demo:stage", "--name=demo-stage").narrow('svc').expose()
+            openshift.newApp('demo:stage', '--name=demo-stage').narrow('svc').expose('--port=80', '--target-port=8080')
           }
         }
       }
