@@ -3,12 +3,14 @@ pipeline {
     label 'maven'
   }
   stages {
+
     stage('Build App') {
       steps {
         sh 'mvn clean install'
       }
     }
-    stage('Create DEV Image Builder') {
+
+    stage('Create Image Builder') {
       when {
         expression {
           openshift.withCluster() {
