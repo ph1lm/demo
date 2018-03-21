@@ -8,11 +8,27 @@ pipeline {
         sh 'mvn clean install'
       }
     }
+    stage('Create Image Builder') {
+      when {
+        expression {
+          openshift.withCluster() {
+            return !openshift.selector('bc', 'demo-binary').exists();
+          }
+        }
+      }
+      steps {
+        script {
+          openshift.withCluster() {
+            openshift.newBuild('--name=demo-binary', '--binary')
+          }
+        }
+      }
+    }
     stage('Build Image') {
       steps {
         script {
           openshift.withCluster() {
-            openshift.selector('bc', 'demo').startBuild('--from-file=target/demo-0.0.1-SNAPSHOT.jar', '--wait')
+            openshift.selector('bc', 'demo-binary').startBuild('--from-file=target/demo-0.0.1-SNAPSHOT.jar', '--wait')
           }
         }
       }
